@@ -10,11 +10,6 @@ The listing interface used by FlatList, which is based on ScrollView, is termed 
 
 Here comes to rescue FlashList, An alternative to FlatList that uses the UI thread and, according to their website, is 10 times quicker in JS and 5 times faster in JS thread. These performance gains are pretty impressive, even if only half the improvement is taken into account.
 
-To use it, you only need to install FlashList using this command:
-
-yarn add @shopify/flash-list
-pod install if you need to replace your existing <FlatList> with <FlashList>. That’s it!
-
 ## Initializing React Native App
 
 We will use **React Native CLI** to create our app. Make sure to check out their [installation guide](https://reactnative.dev/docs/environment-setup) if you haven't.
