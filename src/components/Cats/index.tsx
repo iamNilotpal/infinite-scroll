@@ -1,6 +1,12 @@
 import { FlashList } from '@shopify/flash-list';
 import React from 'react';
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import {
+  ActivityIndicator,
+  FlatList,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 
 import useCats from '../../hooks/useCats';
 import Loader from '../Loader';
@@ -40,6 +46,15 @@ const CatsPreview = () => {
           onEndReachedThreshold={0.1}
           contentContainerStyle={{ paddingVertical: 20 }}
         />
+        /* Un-Optimized */
+        // <FlatList
+        //   data={catsData}
+        //   renderItem={({ item }: { item: CatType }) => <CatCard item={item} />}
+        //   keyExtractor={item => item.id}
+        //   onEndReached={loadMoreCats}
+        //   onEndReachedThreshold={0.1}
+        //   contentContainerStyle={{ paddingVertical: 20 }}
+        // />
       )}
     </View>
   );

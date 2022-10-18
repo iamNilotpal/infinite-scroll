@@ -23,10 +23,7 @@ export default function useCats() {
     hasNextPage,
     fetchNextPage,
   } = useInfiniteQuery(['dogs'], () => fetcher(), {
-    getNextPageParam: lastPage => {
-      if (lastPage.data.length < 20) return undefined;
-      return lastPage.nextPage;
-    },
+    getNextPageParam: ({ nextPage }) => nextPage,
     staleTime: Infinity,
   });
 

@@ -223,7 +223,7 @@ export default App;
 
 ## Fetching Data
 
-To fetch data we will utilize react's custom hook. To get started create a file `useCats.js` inside `hooks` directory. We will be fetching data from the [Cats API](https://thecatapi.com) and will use the `useInfiniteQuery` hook from react-query.
+To fetch data we will utilize react's custom hook. To get started create a file `useCats.js` inside `hooks` directory. We will be fetching data from the [Cats API](https://thecatapi.com) and will use the `useInfiniteQuery` hook from react-query. `useInfiniteQuery` hooks accepts the same arguments as `useQuery`. First one is an array of unique keys, second is a fetcher function which will fetch the data and third is an optional object with some properties.
 
 Inside `useCats.js` file add the following code :
 
@@ -243,30 +243,109 @@ const fetcher = async (pageNumber: number = 0) => {
 };
 
 export default function useCats() {
-  const {
-    data,
-    isError,
-    isLoading,
-    error,
-    isFetching,
-    hasNextPage,
-    fetchNextPage,
-  } = useInfiniteQuery(['dogs'], () => fetcher(), {
-    getNextPageParam: lastPage => {
-      if (lastPage.data.length < 20) return undefined;
-      return lastPage.nextPage;
-    },
-    staleTime: Infinity,
-  });
+  const { data, isError, isLoading, error, hasNextPage, fetchNextPage } =
+    useInfiniteQuery(['dogs'], () => fetcher(), {
+      getNextPageParam: ({ nextPage }) => nextPage,
+      staleTime: Infinity,
+    });
 
   return {
     data,
     isError,
     isLoading,
     error,
-    isFetching,
     hasNextPage,
     fetchNextPage,
   };
 }
 ```
+
+In the above code the `fetcher` function accepts an argument `pageNumber` to paginate the data form the api. The returned data is also modified, which is an object containing the keys data and nextPage. Every time an API call is successful, nextPage is increased. This format of the data is required by useInfiniteQuery. The response we received from the `fetcher` method is passed as the lastPage parameter, which is accepted by getNextPageParam, which then returns the subsequent page. `useInfiniteQuery` returns several additional methods to us. There are now functions `fetchNextPage` and a boolean property `hasNextPage` which indicates if we can make more query.
+
+## Combining everything
+
+The data format returned by `useInfiniteQuery` is an object with two keys:
+
+- pageParams - an array of the page number
+- pages - an array of our data for each page
+
+In order to map through the data for each page as an array and render them, we must flatten the pages first. We can use the flatMap method.
+
+```js
+const catsData = data?.pages.flatMap(page => page.data);
+```
+
+Now update the `index.jsx` file in `Cats` folder with the following code :
+
+```js
+import { FlashList } from '@shopify/flash-list';
+import React from 'react';
+import {
+  ActivityIndicator,
+  FlatList,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
+
+import useCats from '../../hooks/useCats';
+import Loader from '../Loader';
+import CatCard from './CatCard';
+
+const CatsPreview = () => {
+  const {
+    isLoading,
+    isError,
+    data,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetching,
+  } = useCats();
+
+  const catsData = data?.pages.flatMap(page => page.data);
+  const loadMoreCats = () => hasNextPage && fetchNextPage();
+
+  return (
+    <View style={styles.container}>
+      {isLoading && <Loader text="LOADING BREADS" />} // LOADING SCREEN
+      {isFetching && <ActivityIndicator color="#ffe742" size={25} />} // FETCHING INDICATOR
+      {isError && (
+        <Text style={styles.error}>
+          {error.message : 'Something went wrong'}. // ERROR HANDLING
+        </Text>
+      )}
+      {catsData && catsData.length > 0 && (
+        <FlashList
+          data={catsData}
+          renderItem={({ item }) => <CatCard item={item} />}
+          keyExtractor={item => item.id}
+          estimatedItemSize={70}
+          onEndReached={loadMoreCats}
+          onEndReachedThreshold={0.1}
+          contentContainerStyle={{ paddingVertical: 20 }}
+        />
+      )}
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    width: '100%',
+    height: '100%',
+  },
+
+  error: {
+    color: '#ffe742',
+    fontSize: 18,
+    fontWeight: '600',
+    textAlign: 'center',
+    marginVertical: 20,
+  },
+});
+
+export default CatsPreview;
+```
+
+When scroll position reaches the threshold value, a function to load new data can be called. In React Native, the threshold value ranges from 0 to 1, with 0.5 serving as the default. In above code we have used `hasNextPage` and `fetchNextPage` to create the function `loadMoreCats` which will be used to fetch cats when scrolling.
