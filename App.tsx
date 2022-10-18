@@ -2,7 +2,7 @@ import React from 'react';
 import { StatusBar, StyleSheet, View } from 'react-native';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import Border from './src/components/Border';
-import DogPreview from './src/components/Breeds';
+import CatsPreview from './src/components/Cats';
 
 const queryClient = new QueryClient();
 
@@ -12,7 +12,7 @@ const App = () => {
       <StatusBar barStyle="light-content" backgroundColor="#201d29" />
       <View style={styles.container}>
         <Border />
-        <DogPreview />
+        <CatsPreview />
       </View>
     </QueryClientProvider>
   );

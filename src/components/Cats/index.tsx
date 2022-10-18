@@ -1,5 +1,5 @@
 import { FlashList } from '@shopify/flash-list';
-import React, { useState } from 'react';
+import React from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 
 import useCats from '../../hooks/useCats';
@@ -7,7 +7,7 @@ import Loader from '../Loader';
 import CatCard from './CatCard';
 import { CatType } from './types';
 
-const DogPreview = () => {
+const CatsPreview = () => {
   const {
     isLoading,
     isError,
@@ -60,4 +60,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DogPreview;
+export default CatsPreview;
