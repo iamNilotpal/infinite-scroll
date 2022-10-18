@@ -2,7 +2,9 @@
 
 Since I first began using React Native, I have encountered this warning at least a dozen times, or maybe you too:
 
-> **VirtualizedList: You have a large list that is slow to update — make sure your renderItem function renders components that follow React performance best practices like PureComponent, shouldComponentUpdate, React.memo, useCallback, useMemo etc.**
+```bash
+VirtualizedList: You have a large list that is slow to update — make sure your renderItem function renders components that follow React performance best practices like PureComponent, shouldComponentUpdate, React.memo, useCallback, useMemo etc.
+```
 
 Right, it seems familiar isn't it? This typically occurs when we load up a FlatList with lots of items that aren't just static text or images but instead have components with animations or data from third party api or other interactions.
 
