@@ -35,7 +35,7 @@ const DogPreview = () => {
           data={catsData}
           renderItem={({ item }: { item: CatType }) => <CatCard item={item} />}
           keyExtractor={item => item.id}
-          estimatedItemSize={100}
+          estimatedItemSize={70}
           onEndReached={loadMoreCats}
           onEndReachedThreshold={0.1}
           contentContainerStyle={{ paddingVertical: 20 }}
