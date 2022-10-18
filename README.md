@@ -303,7 +303,6 @@ const CatsPreview = () => {
 
   return (
     <View style={styles.container}>
-      {isLoading && <Loader text="LOADING BREADS" />} // LOADING SCREEN
       {isFetching && <ActivityIndicator color="#ffe742" size={25} />} // FETCHING INDICATOR
       {isError && (
         <Text style={styles.error}>
