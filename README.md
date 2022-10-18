@@ -8,7 +8,7 @@ Right, it seems familiar isn't it? This typically occurs when we load up a FlatL
 
 The listing interface used by `FlatList`, which is based on ScrollView, is termed VirtualizedList. Under the hood, VirtualizedList makes use of a rendering API that renders an enumerable list of items as a scroll. Perhaps because we use the newest iPhone and effortlessly post to Instagram every day, we don't see it. Even if everything appears to be in order, you can still encounter this problem if your project runs on low-end devices, particularly Android ones. Simply put, in order to figure it out, such strategies also require some computations.
 
-Here comes to rescue FlashList, An alternative to FlatList that uses the UI thread and, according to their website, is 10 times quicker in JS and 5 times faster in JS thread. These performance gains are pretty impressive, even if only half the improvement is taken into account.
+Here comes to rescue `FlashList`, An alternative to FlatList that uses the UI thread and, according to their website, is 10 times quicker in JS and 5 times faster in JS thread. These performance gains are pretty impressive, even if only half the improvement is taken into account.
 
 ## Initializing React Native App
 
