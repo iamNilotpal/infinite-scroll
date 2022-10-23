@@ -1,12 +1,12 @@
 import React from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { CatType } from '../types';
 
 const CatCard: React.FC<{ item: CatType }> = ({ item }) => {
   const { image, name, origin } = item;
 
   return (
-    <View style={styles.container}>
+    <TouchableOpacity style={styles.container} activeOpacity={0.8}>
       <Image
         source={{ uri: image.url }}
         resizeMode="contain"
@@ -16,19 +16,18 @@ const CatCard: React.FC<{ item: CatType }> = ({ item }) => {
         <Text style={styles.name}>{name}</Text>
         <Text style={styles.origin}>{origin}</Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    width: '75%',
+    width: '70%',
     alignSelf: 'center',
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#403c4a',
-    paddingHorizontal: 15,
-    paddingVertical: 10,
+    padding: 15,
     borderRadius: 10,
     marginBottom: 20,
   },

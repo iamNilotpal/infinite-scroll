@@ -1,6 +1,7 @@
 import React from 'react';
 import { StatusBar, StyleSheet, View } from 'react-native';
 import { QueryClient, QueryClientProvider } from 'react-query';
+
 import Border from './src/components/Border';
 import CatsPreview from './src/components/Cats';
 
