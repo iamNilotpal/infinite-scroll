@@ -1,5 +1,5 @@
 import { FlashList } from '@shopify/flash-list';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import useCats from '../../hooks/useCats';
@@ -17,14 +17,9 @@ const CatsPreview = () => {
     hasNextPage,
     isFetching,
   } = useCats();
-  const [refreshing, setRefreshing] = useState(false);
 
   const catsData = data?.pages.flatMap(page => page.data);
   const loadMoreCats = () => hasNextPage && fetchNextPage();
-
-  useEffect(() => {
-    setRefreshing(isFetching);
-  }, [isFetching]);
 
   return (
     <View style={styles.container}>
@@ -43,7 +38,7 @@ const CatsPreview = () => {
           onEndReached={loadMoreCats}
           onEndReachedThreshold={0.1}
           contentContainerStyle={{ paddingVertical: 20 }}
-          refreshing={refreshing}
+          refreshing={isFetching}
           onRefresh={() => loadMoreCats()}
         />
       )}
