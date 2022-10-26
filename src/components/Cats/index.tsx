@@ -1,6 +1,6 @@
 import { FlashList } from '@shopify/flash-list';
-import React from 'react';
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 
 import useCats from '../../hooks/useCats';
 import Loader from '../Loader';
@@ -17,20 +17,18 @@ const CatsPreview = () => {
     hasNextPage,
     isFetching,
   } = useCats();
+  const [refreshing, setRefreshing] = useState(false);
 
   const catsData = data?.pages.flatMap(page => page.data);
   const loadMoreCats = () => hasNextPage && fetchNextPage();
 
+  useEffect(() => {
+    setRefreshing(isFetching);
+  }, [isFetching]);
+
   return (
     <View style={styles.container}>
       {isLoading && <Loader text="LOADING BREADS" />}
-      {isFetching && !isLoading && (
-        <ActivityIndicator
-          color="#ffe742"
-          size={40}
-          style={[StyleSheet.absoluteFillObject, styles.activityIndicator]}
-        />
-      )}
       {isError && (
         <Text style={styles.error}>
           {error instanceof Error ? error.message : 'Something went wrong'}.
@@ -45,6 +43,8 @@ const CatsPreview = () => {
           onEndReached={loadMoreCats}
           onEndReachedThreshold={0.1}
           contentContainerStyle={{ paddingVertical: 20 }}
+          refreshing={refreshing}
+          onRefresh={() => loadMoreCats()}
         />
       )}
     </View>
