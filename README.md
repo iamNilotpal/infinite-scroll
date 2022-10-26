@@ -282,18 +282,13 @@ Now update the `index.jsx` file in `Cats` folder with the following code :
 
 ```js
 import { FlashList } from '@shopify/flash-list';
-import React from 'react';
-import {
-  ActivityIndicator,
-  FlatList,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 
 import useCats from '../../hooks/useCats';
 import Loader from '../Loader';
 import CatCard from './CatCard';
+import { CatType } from './types';
 
 const CatsPreview = () => {
   const {
@@ -311,21 +306,23 @@ const CatsPreview = () => {
 
   return (
     <View style={styles.container}>
-      {isFetching && <ActivityIndicator color="#ffe742" size={25} />} // FETCHING INDICATOR
+      {isLoading && <Loader text="LOADING BREADS" />}
       {isError && (
         <Text style={styles.error}>
-          {error.message : 'Something went wrong'}. // ERROR HANDLING
+          {error instanceof Error ? error.message : 'Something went wrong'}.
         </Text>
       )}
       {catsData && catsData.length > 0 && (
         <FlashList
           data={catsData}
-          renderItem={({ item }) => <CatCard item={item} />}
+          renderItem={({ item }: { item: CatType }) => <CatCard item={item} />}
           keyExtractor={item => item.id}
           estimatedItemSize={70}
           onEndReached={loadMoreCats}
           onEndReachedThreshold={0.1}
           contentContainerStyle={{ paddingVertical: 20 }}
+          refreshing={isFetching}
+          onRefresh={loadMoreCats}
         />
       )}
     </View>
@@ -337,7 +334,6 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
-
   error: {
     color: '#ffe742',
     fontSize: 18,
@@ -345,9 +341,21 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginVertical: 20,
   },
+  activityIndicator: {
+    zIndex: 10,
+    backgroundColor: 'rgba(0, 0, 0, 0.2)',
+  },
 });
 
 export default CatsPreview;
 ```
 
 When scroll position reaches the threshold value, a function to load new data can be called. In React Native, the threshold value ranges from 0 to 1, with 0.5 serving as the default. In above code we have used `hasNextPage` and `fetchNextPage` to create the function `loadMoreCats` which will be used to fetch cats when scrolling.
+
+FlashList provides `RefreshControl` which can be used show to a loading indicator while fetching data. To use it we need to provide two props to `FlashList`, `refreshing` and `onRefresh`. `refreshing` is boolean property and `onRefresh` is a callback function which will be called while fetching. For `refreshing` we got `isFetching` and for `onRefresh` we have `loadMoreCats`.
+
+## Conclusion
+
+Now that I believe React Query and FlashList is more capable and will become more well-liked by the community, I believe, other developers to can give it a shot.
+
+Repo link [React Query Infinite Scroll](https://github.com/iamNilotpal/infinite-scroll)
