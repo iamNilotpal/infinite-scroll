@@ -24,7 +24,13 @@ const CatsPreview = () => {
   return (
     <View style={styles.container}>
       {isLoading && <Loader text="LOADING BREADS" />}
-      {isFetching && <ActivityIndicator color="#ffe742" size={25} />}
+      {isFetching && !isLoading && (
+        <ActivityIndicator
+          color="#ffe742"
+          size={40}
+          style={[StyleSheet.absoluteFillObject, styles.activityIndicator]}
+        />
+      )}
       {isError && (
         <Text style={styles.error}>
           {error instanceof Error ? error.message : 'Something went wrong'}.
@@ -56,6 +62,10 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     textAlign: 'center',
     marginVertical: 20,
+  },
+  activityIndicator: {
+    zIndex: 10,
+    backgroundColor: 'rgba(0, 0, 0, 0.2)',
   },
 });
 
