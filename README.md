@@ -1,3 +1,7 @@
+## `Preview`
+
+<video src="./src/assets/blog.mp4" autoplay height="400" width="auto"></video>
+
 ## The Problem
 
 Since I first began using React Native, I have encountered this warning at least a dozen times, or maybe you too:
