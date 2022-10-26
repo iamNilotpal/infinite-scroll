@@ -1,6 +1,6 @@
 ## `Preview`
 
-<video src="./src/assets/blog.mp4" autoplay height="400" width="auto"></video>
+<video src="./src/assets/blog.mp4" autoplay height="400"></video>
 
 ## The Problem
 
