@@ -7,7 +7,7 @@ const Border = () => {
       colors={['#ff87d4', '#ffe742', '#87fffb']}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 0 }}
-      style={{ width: '100%', height: 10 }}
+      style={{ width: '100%', height: 5 }}
     />
   );
 };
