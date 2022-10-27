@@ -18,8 +18,8 @@ const CatsPreview: React.FC<CatsPreviewProps> = ({
   return (
     <AnimatedFlashList
       data={catsData}
-      renderItem={({ item }: { item: CatType }) => (
-        <CatCard item={item} key={item.id} />
+      renderItem={({ item, index }: { item: CatType; index: number }) => (
+        <CatCard item={item} key={item.id} index={index} />
       )}
       keyExtractor={item => item.id}
       numColumns={2}

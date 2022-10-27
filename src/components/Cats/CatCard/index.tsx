@@ -1,27 +1,33 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { AppStackParams } from '../../../navigation/AppNavigation';
 import { CatType } from '../types';
+import { View as AnimatedView } from 'react-native-animatable';
 
-const CatCard: React.FC<{ item: CatType }> = ({ item }) => {
+const CatCard: React.FC<{ item: CatType; index: number }> = ({
+  item,
+  index,
+}) => {
   const { image, name, origin } = item;
   const navigation = useNavigation<NativeStackNavigationProp<AppStackParams>>();
 
   return (
-    <TouchableOpacity
-      style={styles.container}
-      activeOpacity={0.8}
-      onPress={() => navigation.navigate('CatScreen', item)}>
-      <Image
-        source={{ uri: image.url }}
-        resizeMode="center"
-        style={styles.image}
-      />
-      <Text style={styles.name}>{name}</Text>
-      <Text style={styles.origin}>{origin}</Text>
-    </TouchableOpacity>
+    <AnimatedView animation="slideInUp" duration={1000} delay={index * 10}>
+      <TouchableOpacity
+        style={styles.container}
+        activeOpacity={0.8}
+        onPress={() => navigation.navigate('CatScreen', item)}>
+        <Image
+          source={{ uri: image.url }}
+          resizeMode="center"
+          style={styles.image}
+        />
+        <Text style={styles.name}>{name}</Text>
+        <Text style={styles.origin}>{origin}</Text>
+      </TouchableOpacity>
+    </AnimatedView>
   );
 };
 
