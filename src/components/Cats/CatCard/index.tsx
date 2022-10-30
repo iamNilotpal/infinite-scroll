@@ -14,7 +14,7 @@ const CatCard: React.FC<{ item: CatType; index: number }> = ({
   const navigation = useNavigation<NativeStackNavigationProp<AppStackParams>>();
 
   return (
-    <AnimatedView animation="slideInUp" duration={1000} delay={index * 10}>
+    <AnimatedView animation="slideInUp" duration={1000} delay={index}>
       <TouchableOpacity
         style={styles.container}
         activeOpacity={0.8}

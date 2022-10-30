@@ -4,7 +4,7 @@ export default StyleSheet.create({
   container: {
     height: '100%',
     width: '100%',
-    paddingLeft: 14.7,
+    marginLeft: 12,
   },
   error: {
     color: '#ffe742',
