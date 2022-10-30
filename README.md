@@ -76,7 +76,7 @@ export default App;
 
 ## Creating Components
 
-Now before moving ahead let's setup `React Navigation`. First create a folder `src` in the root of the project. Then create two new folders `navigation` and `screens` in `src`. In the navigation folder add two files `AppNavigation.tsx` and `RootNavigation.tsx`. `RootNavigation.tsx` will contain the NavigationContainer and the Stack Navigator exported from `AppNavigation.tsx`. Now add 2 files in the `screens` folder, `Cats.tsx` and `Cat.tsx` and export a default component from each file. Now add the following code in both `AppNavigation.tsx` and `RootNavigation.tsx`.
+Now before moving ahead let's setup React Navigation. First create a folder `src` in the root of the project. Then create two new folders `navigation` and `screens` in `src`. In the navigation folder add two files `AppNavigation.tsx` and `RootNavigation.tsx`. `RootNavigation.tsx` will contain the NavigationContainer and the Stack Navigator exported from `AppNavigation.tsx`. Now add 2 files in the `screens` folder, `Cats.tsx` and `Cat.tsx` and export a default component from each file. Now add the following code in both `AppNavigation.tsx` and `RootNavigation.tsx`.
 
 In `AppNavigation.tsx` :
 
@@ -111,7 +111,7 @@ const AppNavigation = () => {
 export default AppNavigation;
 ```
 
-In `RootNavigation.tsx` :4
+In `RootNavigation.tsx` :
 
 ```js
 import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
@@ -241,6 +241,8 @@ const styles = StyleSheet.create({
 
 export default CatCard;
 ```
+
+Don't worry about the `index` prop. We will be using it later.
 
 Here we're importing `CatTpe` from `types` folder. So add a types folder and a `index.ts` file and add the following code :
 
@@ -421,7 +423,7 @@ const styles = StyleSheet.create({
 export default CatsScreen;
 ```
 
-After everything our app should look something like this :
+**After everything our app should look something like this :**
 
 <img src="./src/assets/screenshot-1.jpg" height="300"/>
 
@@ -500,8 +502,140 @@ const styles = StyleSheet.create({
 export default CatCard;
 ```
 
+Here I'm using `slideInUp` animation. Use can use other animation types. I'm using the index number to delay the animation of each card.
+
+Now let's add the screen to view each Cat's detailed information. We've an `onPress` handler on the **CatCard** and passing the cat data to the **CatScreen** page. Update the `Cat.tsx` file :
+
+```js
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import React from 'react';
+import {
+  Image,
+  ImageSourcePropType,
+  Linking,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+
+import arrowLeft from '../../assets/arrow-left.png';
+import { AppStackParams } from '../../navigation/AppNavigation';
+import styles from './styles';
+
+const CatScreen = () => {
+  const { params: cat } = useRoute<RouteProp<AppStackParams, 'CatScreen'>>();
+  const navigation = useNavigation<NativeStackNavigationProp<AppStackParams>>();
+
+  return (
+    <ScrollView>
+      <Image
+        source={{ uri: cat.image.url }}
+        style={styles.image}
+        resizeMode="cover"
+      />
+      <TouchableOpacity
+        style={styles.arrowContainer}
+        onPress={() => navigation.goBack()}>
+        <Image source={arrowLeft as ImageSourcePropType} style={styles.arrow} />
+      </TouchableOpacity>
+      <View style={styles.textContainer}>
+        <View style={styles.container}>
+          <Text style={styles.name}>{cat.name}</Text>
+          <Text style={styles.origin}>{cat.origin}</Text>
+        </View>
+        <View style={styles.container}>
+          <Text style={styles.heading}>Description</Text>
+          <Text style={styles.text}>{cat.description}</Text>
+        </View>
+        <View style={styles.container}>
+          <Text style={styles.heading}>Temperament</Text>
+          <Text style={styles.text}>{cat.temperament}</Text>
+        </View>
+        <View style={styles.container}>
+          <Text style={styles.heading}>Life span</Text>
+          <Text style={styles.text}>{cat.life_span} years</Text>
+        </View>
+        <View style={styles.container}>
+          <Text style={styles.heading}>Scores</Text>
+          <View style={styles.flex}>
+            <Text style={styles.text}>Adaptability</Text>
+            <Text style={styles.mr}>-</Text>
+            <Text style={styles.text}>{cat.adaptability}</Text>
+          </View>
+          <View style={styles.flex}>
+            <Text style={styles.text}>Child Friendly</Text>
+            <Text style={styles.mr}>-</Text>
+            <Text style={styles.text}>{cat.child_friendly}</Text>
+          </View>
+          <View style={styles.flex}>
+            <Text style={styles.text}>Stranger Friendly</Text>
+            <Text style={styles.mr}>-</Text>
+            <Text style={styles.text}>{cat.stranger_friendly}</Text>
+          </View>
+        </View>
+        <View style={styles.container}>
+          <Text style={styles.heading}>Wikipedia URL</Text>
+          <Text
+            style={[styles.text, { color: '#2d7fea' }]}
+            onPress={() => Linking.openURL(cat.wikipedia_url)}>
+            {cat.wikipedia_url}
+          </Text>
+        </View>
+      </View>
+    </ScrollView>
+  );
+};
+
+const styles = StyleSheet.create({
+  image: { width: '100%', height: 300 },
+  arrowContainer: {
+    position: 'absolute',
+    width: 27,
+    height: 27,
+    padding: 7,
+    backgroundColor: '#f4f73e',
+    borderRadius: 50,
+    top: 15,
+    left: 15,
+  },
+  arrow: {
+    width: '100%',
+    height: '100%',
+  },
+  textContainer: { paddingBottom: 15, paddingHorizontal: 20 },
+  name: {
+    color: '#f5f2fc',
+    fontSize: 35,
+    fontWeight: '700',
+    marginBottom: -2,
+  },
+  origin: { color: '#767980', fontSize: 20, fontWeight: '700' },
+  container: {
+    marginTop: 20,
+  },
+  heading: {
+    fontWeight: '700',
+    fontSize: 15,
+    color: '#d4d0e0',
+    marginBottom: 5,
+  },
+  text: { fontWeight: '500', fontSize: 13, color: '#767980' },
+  flex: { flexDirection: 'row', alignItems: 'center' },
+  mr: { marginHorizontal: 10 },
+});
+
+export default CatScreen;
+```
+
+**If everything was okay it should look something like this :**
+
+<img src="./src/assets/screenshot-2.jpg" height="300" />
+
 ## Conclusion
 
-Now that I believe React Query and FlashList is more capable and will become more well-liked by the community, I believe, other developers to can give it a shot.
+This concludes our app. I believe React Query and FlashList is more capable and will become more well-liked by the community, I believe, other developers to can give it a shot.
 
 Repo link [React Query Infinite Scroll](https://github.com/iamNilotpal/infinite-scroll)
