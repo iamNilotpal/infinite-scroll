@@ -1,11 +1,12 @@
-import { View, Text, Image, ImageSourcePropType } from 'react-native';
-import React from 'react';
-import catImage from '../../assets/cat.jpg';
-import styles from './styles';
-import Button from '../../components/Button';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import React from 'react';
+import { Image, ImageSourcePropType, Text, View } from 'react-native';
+
+import catImage from '../../assets/cat.jpg';
+import Button from '../../components/Button';
 import { AppStackParams } from '../../navigation/AppNavigation';
+import styles from './styles';
 
 const HomeScreen = () => {
   const navigation = useNavigation<NativeStackNavigationProp<AppStackParams>>();

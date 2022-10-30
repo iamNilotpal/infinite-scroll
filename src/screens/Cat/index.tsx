@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+
 import arrowLeft from '../../assets/arrow-left.png';
 import { AppStackParams } from '../../navigation/AppNavigation';
 import styles from './styles';

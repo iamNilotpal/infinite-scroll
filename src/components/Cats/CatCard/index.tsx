@@ -2,9 +2,10 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { View as AnimatedView } from 'react-native-animatable';
+
 import { AppStackParams } from '../../../navigation/AppNavigation';
 import { CatType } from '../types';
-import { View as AnimatedView } from 'react-native-animatable';
 
 const CatCard: React.FC<{ item: CatType; index: number }> = ({
   item,
