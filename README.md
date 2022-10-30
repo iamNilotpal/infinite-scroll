@@ -1,7 +1,3 @@
-## `Preview`
-
-<video src="./src/assets/blog.mp4" autoplay height=400></video>
-
 ## The Problem
 
 Since I first began using React Native, I have encountered this warning at least a dozen times, or maybe you too:
@@ -20,12 +16,12 @@ Here comes to rescue `FlashList`, An alternative to FlatList that uses the UI th
 
 ## Initializing React Native App
 
-We will use **React Native CLI** to create our app. Make sure to check out their [installation guide](https://reactnative.dev/docs/environment-setup) if you haven't.
+We will use **React Native CLI** to create our app. Make sure to check out their [installation guide](https://reactnative.dev/docs/environment-setup) if you haven't. I will be using TypeScript in this project.
 
 To get started run this command :
 
 ```bash
-npx react-native init InfiniteScroll
+npx react-native init InfiniteScroll --template react-native-template-typescript
 ```
 
 Now wait until the installation is finished and then navigate to that directory.
@@ -36,15 +32,15 @@ cd InfiniteScroll
 
 ## Installing Dependencies
 
-Here i'm using yarn you can use npm too.
+We will be using `React Navigation` in the project.Install the dependencies by running the command below. Here i'm using yarn you can use npm too.
 
 ```bash
-yarn add @shopify/flash-list react-query
+yarn add @shopify/flash-list react-query @react-navigation/native react-native-screens react-native-safe-area-context @react-navigation/native-stack
 ```
 
 ## Setting up React Query
 
-In order to use react-query in our project we need to setup some things. So, open you App.js file and add the following code.
+In order to use react-query in our project we need to setup some things. So, open you App.tsx file and add the following code.
 
 ```js
 import React from 'react';
@@ -76,128 +72,78 @@ const styles = StyleSheet.create({
 export default App;
 ```
 
-> Note: I wont be covering the styling part. You can add your own styles.
+> Note: I wont be covering the styling part. You can add your own styles or copy mine.
 
 ## Creating Components
 
-To get started let's first create some components. First create a directory called `src` in your root folder. Inside `src` create two new folders `components` and `hooks`. Now create a folder `Cats` inside `components` and inside that create `index.jsx` and `CatCard.jsx` file.
+Now before moving ahead let's setup `React Navigation`. First create a folder `src` in the root of the project. Then create two new folders `navigation` and `screens` in `src`. In the navigation folder add two files `AppNavigation.tsx` and `RootNavigation.tsx`. `RootNavigation.tsx` will contain the NavigationContainer and the Stack Navigator exported from `AppNavigation.tsx`. Now add 2 files in the `screens` folder, `Cats.tsx` and `Cat.tsx` and export a default component from each file. Now add the following code in both `AppNavigation.tsx` and `RootNavigation.tsx`.
 
-In `CatCard.jsx` add the following code :
+In `AppNavigation.tsx` :
 
 ```js
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { CatType } from '../components/Cats/types';
 
-const CatCard = ({ item }) => {
-  const { image, name, origin } = item;
+import CatScreen from '../screens/Cat';
+import CatsScreen from '../screens/Cats';
+import HomeScreen from '../screens/Home';
 
+export type AppStackParams = {
+  HomeScreen: undefined;
+  CatsScreen: undefined;
+  CatScreen: CatType;
+};
+
+const AppStack = createNativeStackNavigator<AppStackParams>();
+
+const AppNavigation = () => {
   return (
-    <View style={styles.container}>
-      <Image
-        source={{ uri: image.url }}
-        resizeMode="contain"
-        style={styles.image}
-      />
-      <View>
-        <Text style={styles.name}>{name}</Text>
-        <Text style={styles.origin}>{origin}</Text>
-      </View>
-    </View>
+    <AppStack.Navigator
+      screenOptions={{ headerShown: false, animation: 'slide_from_right' }}>
+      <AppStack.Screen name="HomeScreen" component={HomeScreen} />
+      <AppStack.Screen name="CatsScreen" component={CatsScreen} />
+      <AppStack.Screen name="CatScreen" component={CatScreen} />
+    </AppStack.Navigator>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    width: '75%',
-    alignSelf: 'center',
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#403c4a',
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-    borderRadius: 10,
-    marginBottom: 20,
-  },
-  image: {
-    width: 70,
-    height: 70,
-    borderRadius: 80,
-    marginRight: 20,
-  },
-  name: { color: '#f4f2fb', fontSize: 16, fontWeight: 'bold' },
-  origin: {
-    color: '#b1acb9',
-    fontSize: 12,
-    fontWeight: '600',
-    marginBottom: 5,
+export default AppNavigation;
+```
+
+In `RootNavigation.tsx` :4
+
+```js
+import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
+import React from 'react';
+import AppNavigation from './AppNavigation';
+
+const theme = Object.freeze({
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    background: '#201d29',
   },
 });
 
-export default CatCard;
-```
-
-In `index.jsx` file put the following code :
-
-```js
-import { FlashList } from '@shopify/flash-list';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import CatCard from './CatCard';
-
-const CATS_DATA = [
-  {
-    id: '1',
-    name: 'My Cat',
-    origin: 'India',
-    image:
-      'https://images.pexels.com/photos/617278/pexels-photo-617278.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-  },
-  {
-    id: '1',
-    name: 'Your Cat',
-    origin: 'India',
-    image:
-      'https://images.pexels.com/photos/617278/pexels-photo-617278.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-  },
-];
-
-const CatsPreview = () => {
+const RootNavigation = () => {
   return (
-    <FlashList
-      data={CATS_DATA}
-      renderItem={({ item }) => <CatCard item={item} />}
-      keyExtractor={item => item.id}
-      estimatedItemSize={70}
-      contentContainerStyle={{ paddingVertical: 20 }}
-    />
+    <NavigationContainer theme={theme}>
+      <AppNavigation />
+    </NavigationContainer>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-    height: '100%',
-  },
-
-  error: {
-    color: '#ffe742',
-    fontSize: 18,
-    fontWeight: '600',
-    textAlign: 'center',
-    marginVertical: 20,
-  },
-});
-
-export default CatsPreview;
+export default RootNavigation;
 ```
 
-Now in `App.js` file add the CatPreview Component like that :
+Update the `App.tsx` file with the following code :
 
 ```js
 import React from 'react';
-import { StatusBar, StyleSheet, View } from 'react-native';
+import { StatusBar, View } from 'react-native';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import CatsPreview from './src/components/Cats';
+import RootNavigation from './src/navigation/RootNavigation';
 
 const queryClient = new QueryClient();
 
@@ -206,7 +152,7 @@ const App = () => {
     <QueryClientProvider client={queryClient}>
       <StatusBar barStyle="light-content" backgroundColor="#201d29" />
       <View style={styles.container}>
-        <CatsPreview />
+        <RootNavigation />
       </View>
     </QueryClientProvider>
   );
@@ -224,11 +170,149 @@ const styles = StyleSheet.create({
 export default App;
 ```
 
+## Creating Components
+
+Navigation looks okay so to get started let's first create some components. First create a directory called `src` in your root folder. Inside `src` create two new folders `components` and `hooks`. Now create a folder `Cats` inside `components` and inside that create `index.jsx` and `CatCard.jsx` file.
+
+In `CatCard.tsx` add the following code :
+
+```js
+import React from 'react';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+
+import { AppStackParams } from '../../../navigation/AppNavigation';
+import { CatType } from '../types';
+
+const CatCard: React.FC<{ item: CatType; index: number }> = ({
+  item,
+  index,
+}) => {
+  const { image, name, origin } = item;
+  const navigation = useNavigation<NativeStackNavigationProp<AppStackParams>>();
+
+  return (
+    <View>
+      <TouchableOpacity
+        style={styles.container}
+        activeOpacity={0.8}
+        onPress={() => navigation.navigate('CatScreen', item)}>
+        <Image
+          source={{ uri: image.url }}
+          resizeMode="center"
+          style={styles.image}
+        />
+        <Text style={styles.name}>{name}</Text>
+        <Text style={styles.origin}>{origin}</Text>
+      </TouchableOpacity>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    width: 170,
+    padding: 12,
+    borderRadius: 10,
+    marginBottom: 20,
+    backgroundColor: '#403c4a',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  image: {
+    width: 70,
+    height: 70,
+    borderRadius: 80,
+  },
+  name: {
+    color: '#f4f2fb',
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginTop: 10,
+  },
+  origin: {
+    color: '#b1acb9',
+    fontSize: 12,
+    fontWeight: '600',
+    marginBottom: 5,
+  },
+});
+
+export default CatCard;
+```
+
+Here we're importing `CatTpe` from `types` folder. So add a types folder and a `index.ts` file and add the following code :
+
+```js
+export type CatType = {
+  id: string,
+  name: string,
+  origin: string,
+  description: string,
+  life_span: string,
+  temperament: string,
+  adaptability: number,
+  child_friendly: number,
+  stranger_friendly: number,
+  wikipedia_url: string,
+  image: {
+    width: number,
+    height: number,
+    id: string,
+    url: string,
+  },
+};
+```
+
+In `index.tsx` file put the following code :
+
+```js
+import { FlashList } from '@shopify/flash-list';
+import React from 'react';
+
+import CatCard from './CatCard';
+import { CatType } from './types';
+
+type CatsPreviewProps = {
+  catsData: any[] | undefined | CatType[],
+  loadMoreCats: () => void,
+  isFetching: boolean,
+};
+
+const CatsPreview: React.FC<CatsPreviewProps> = ({
+  catsData,
+  loadMoreCats,
+  isFetching,
+}) => {
+  return (
+    <FlashList
+      data={catsData}
+      renderItem={({ item, index }: { item: CatType, index: number }) => (
+        <CatCard item={item} key={item.id} index={index} />
+      )}
+      keyExtractor={item => item.id}
+      numColumns={2}
+      estimatedItemSize={190 * 15}
+      refreshing={isFetching}
+      onRefresh={loadMoreCats}
+      onEndReached={loadMoreCats}
+      onEndReachedThreshold={0.1}
+      contentContainerStyle={{ paddingVertical: 12 }}
+    />
+  );
+};
+
+export default CatsPreview;
+```
+
+In the above code we're accepting `catsData`, `loadMoreCats` and `isFetching` as props. To break it down `catsData` is the data that will be shown in the screen. When scroll position reaches the threshold value, a function to load new data can be called. In React Native, the threshold value ranges from 0 to 1, with 0.5 serving as the default. In above code we have used the function `loadMoreCats` which will be used to fetch cats when scrolling. FlashList provides `RefreshControl` which can be used show to a loading indicator while fetching data. To use it we need to provide two props to `FlashList`, `refreshing` and `onRefresh`. `refreshing` is boolean property and `onRefresh` is a callback function which will be called while fetching. For `refreshing` we got `isFetching` and for `onRefresh` we have `loadMoreCats`.
+
 ## Fetching Data
 
-To fetch data we will utilize react's custom hook. To get started create a file `useCats.js` inside `hooks` directory. We will be fetching data from the [Cats API](https://thecatapi.com) and will use the `useInfiniteQuery` hook from react-query. `useInfiniteQuery` hooks accepts the same arguments as `useQuery`. First one is an array of unique keys, second is a fetcher function which will fetch the data and third is an optional object with some properties.
+To fetch data we will utilize a custom hook. To get started create a file `useCats.ts` inside `hooks` directory. We will be fetching data from the [Cats API](https://thecatapi.com) and will use the `useInfiniteQuery` hook from react-query. `useInfiniteQuery` hooks accepts the same arguments as `useQuery`. First one is an array of unique keys, second is a fetcher function which will fetch the data and third is an optional object with some properties.
 
-Inside `useCats.js` file add the following code :
+Inside `useCats.ts` file add the following code :
 
 ```js
 import { useInfiniteQuery } from 'react-query';
@@ -241,22 +325,31 @@ const fetcher = async (pageNumber: number = 0) => {
     const data = await response.json();
     return { data, nextPage: pageNumber + 1 };
   } catch (error) {
-    throw new Error(error.message);
+    if (error instanceof Error) throw new Error(error.message);
+    else throw new Error('Something went wrong.');
   }
 };
 
 export default function useCats() {
-  const { data, isError, isLoading, error, hasNextPage, fetchNextPage } =
-    useInfiniteQuery(['dogs'], () => fetcher(), {
-      getNextPageParam: ({ nextPage }) => nextPage,
-      staleTime: Infinity,
-    });
+  const {
+    data,
+    isError,
+    isLoading,
+    error,
+    isFetching,
+    hasNextPage,
+    fetchNextPage,
+  } = useInfiniteQuery(['dogs'], () => fetcher(), {
+    getNextPageParam: ({ nextPage }) => nextPage,
+    staleTime: Infinity,
+  });
 
   return {
     data,
     isError,
     isLoading,
     error,
+    isFetching,
     hasNextPage,
     fetchNextPage,
   };
@@ -278,61 +371,43 @@ In order to map through the data for each page as an array and render them, we m
 const catsData = data?.pages.flatMap(page => page.data);
 ```
 
-Now update the `index.jsx` file in `Cats` folder with the following code :
+Open the `Cats.tsx` file inside `screens` folder and add the following code :
 
 ```js
-import { FlashList } from '@shopify/flash-list';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
+import CatsPreview from '../../components/Cats';
 import useCats from '../../hooks/useCats';
-import Loader from '../Loader';
-import CatCard from './CatCard';
-import { CatType } from './types';
 
-const CatsPreview = () => {
-  const {
-    isLoading,
-    isError,
-    data,
-    error,
-    fetchNextPage,
-    hasNextPage,
-    isFetching,
-  } = useCats();
+const CatsScreen = () => {
+  const { isError, data, error, fetchNextPage, hasNextPage, isFetching } =
+    useCats();
 
   const catsData = data?.pages.flatMap(page => page.data);
   const loadMoreCats = () => hasNextPage && fetchNextPage();
 
   return (
     <View style={styles.container}>
-      {isLoading && <Loader text="LOADING BREADS" />}
       {isError && (
         <Text style={styles.error}>
           {error instanceof Error ? error.message : 'Something went wrong'}.
         </Text>
       )}
-      {catsData && catsData.length > 0 && (
-        <FlashList
-          data={catsData}
-          renderItem={({ item }: { item: CatType }) => <CatCard item={item} />}
-          keyExtractor={item => item.id}
-          estimatedItemSize={70}
-          onEndReached={loadMoreCats}
-          onEndReachedThreshold={0.1}
-          contentContainerStyle={{ paddingVertical: 20 }}
-          refreshing={isFetching}
-          onRefresh={loadMoreCats}
-        />
-      )}
+      <CatsPreview
+        catsData={catsData}
+        isFetching={isFetching}
+        loadMoreCats={loadMoreCats}
+      />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%',
     height: '100%',
+    width: '100%',
+    marginLeft: 12,
   },
   error: {
     color: '#ffe742',
@@ -341,18 +416,89 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginVertical: 20,
   },
-  activityIndicator: {
-    zIndex: 10,
-    backgroundColor: 'rgba(0, 0, 0, 0.2)',
+});
+
+export default CatsScreen;
+```
+
+After everything our app should look something like this :
+
+<img src="./src/assets/screenshot-1.jpg" height="300"/>
+
+It's kind of good but when the app first loads we get a non pleasant layout shift. To fix this lets first add a npm package `react-native-animatable` :
+
+```bash
+yarn add react-native-animatable
+```
+
+Now open the `CatCard.tsx` file and update with the following code :
+
+```js
+import React from 'react';
+import { useNavigation } from '@react-navigation/native';
+import { View as AnimatedView } from 'react-native-animatable';
+import { Image, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
+import { AppStackParams } from '../../../navigation/AppNavigation';
+import { CatType } from '../types';
+
+const CatCard: React.FC<{ item: CatType; index: number }> = ({
+  item,
+  index,
+}) => {
+  const { image, name, origin } = item;
+  const navigation = useNavigation<NativeStackNavigationProp<AppStackParams>>();
+
+  return (
+    <AnimatedView animation="slideInUp" duration={500} delay={index}>
+      <TouchableOpacity
+        style={styles.container}
+        activeOpacity={0.8}
+        onPress={() => navigation.navigate('CatScreen', item)}>
+        <Image
+          source={{ uri: image.url }}
+          resizeMode="center"
+          style={styles.image}
+        />
+        <Text style={styles.name}>{name}</Text>
+        <Text style={styles.origin}>{origin}</Text>
+      </TouchableOpacity>
+    </AnimatedView>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    width: 170,
+    padding: 12,
+    borderRadius: 10,
+    marginBottom: 20,
+    backgroundColor: '#403c4a',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  image: {
+    width: 70,
+    height: 70,
+    borderRadius: 80,
+  },
+  name: {
+    color: '#f4f2fb',
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginTop: 10,
+  },
+  origin: {
+    color: '#b1acb9',
+    fontSize: 12,
+    fontWeight: '600',
+    marginBottom: 5,
   },
 });
 
-export default CatsPreview;
+export default CatCard;
 ```
-
-When scroll position reaches the threshold value, a function to load new data can be called. In React Native, the threshold value ranges from 0 to 1, with 0.5 serving as the default. In above code we have used `hasNextPage` and `fetchNextPage` to create the function `loadMoreCats` which will be used to fetch cats when scrolling.
-
-FlashList provides `RefreshControl` which can be used show to a loading indicator while fetching data. To use it we need to provide two props to `FlashList`, `refreshing` and `onRefresh`. `refreshing` is boolean property and `onRefresh` is a callback function which will be called while fetching. For `refreshing` we got `isFetching` and for `onRefresh` we have `loadMoreCats`.
 
 ## Conclusion
 
