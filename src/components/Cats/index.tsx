@@ -1,4 +1,4 @@
-import { MasonryFlashList } from '@shopify/flash-list';
+import { FlashList } from '@shopify/flash-list';
 import React from 'react';
 
 import CatCard from './CatCard';
@@ -16,14 +16,14 @@ const CatsPreview: React.FC<CatsPreviewProps> = ({
   isFetching,
 }) => {
   return (
-    <MasonryFlashList
+    <FlashList
       data={catsData}
       renderItem={({ item, index }: { item: CatType; index: number }) => (
         <CatCard item={item} key={item.id} index={index} />
       )}
       keyExtractor={item => item.id}
       numColumns={2}
-      estimatedItemSize={188.4 * (catsData?.length || 30)}
+      estimatedItemSize={190 * 15}
       refreshing={isFetching}
       onRefresh={loadMoreCats}
       onEndReached={loadMoreCats}
